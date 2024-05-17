@@ -24,7 +24,23 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+// Date API endpoint
+/* =================================
+Purpose: Will return JSON object with proper format
+Output: 
+================================= */
+app.get("/api/:date?", (req, res) => {
+  console.log(req.params.date);
 
+  let retValue = {unix: 'blank', utc: 'blank'}
+
+  if (req.params.date == undefined) {
+    retValue.utc = new Date().toString();
+    retValue.unix = Date.now();
+  }
+  
+  res.json(retValue);
+})
 
 // Listen on port set in environment variable or default to 3000
 var listener = app.listen(process.env.PORT || 3000, function () {
