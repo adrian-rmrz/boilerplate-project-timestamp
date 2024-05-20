@@ -30,13 +30,39 @@ Purpose: Will return JSON object with proper format
 Output: 
 ================================= */
 app.get("/api/:date?", (req, res) => {
+  console.log("================================");
   console.log(req.params.date);
 
-  let retValue = {unix: 'blank', utc: 'blank'}
+  let retValue = {}
 
   if (req.params.date == undefined) {
-    retValue.utc = new Date().toString();
+    retValue.utc = new Date().toUTCString();
     retValue.unix = Date.now();
+  } else {
+    console.log(typeof(req.params.date));
+
+    let unixDate = Date.parse(req.params.date);
+    let utcDate = new Date(req.params.date);
+    
+    // console.log(unixDate);
+    // console.log(utcDate);
+
+    // If can't parse utc date, assume date is in Unix format
+    if (utcDate == "Invalid Date") {
+      unixDate = parseInt(req.params.date);
+      utcDate = new Date(parseInt(req.params.date));
+
+      // console.log("\nIn unix date format");
+      // console.log(unixDate);
+      // console.log(utcDate);
+    }
+
+    if (unixDate == null || utcDate == "Invalid Date") {
+      retValue.error = "Invalid Date";
+    } else {
+      retValue.unix = unixDate;
+      retValue.utc = utcDate.toUTCString();
+    }
   }
   
   res.json(retValue);
